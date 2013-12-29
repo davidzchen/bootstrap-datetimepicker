@@ -92,10 +92,10 @@
       picker.component = false;
 
       if (picker.element.hasClass('input-group')) {
-        if (picker.element.find('.datepickerbutton').size() == 0) {//in case there is more then one 'input-group-addon` #48
+        //in case there is more then one 'input-group-addon` #48
+        if (picker.element.find('.datepickerbutton').size() == 0) {
           picker.component = picker.element.find("[class^='input-group-']");
-        }
-        else {
+        } else {
           picker.component = picker.element.find('.datepickerbutton');
         }
       }
@@ -104,21 +104,29 @@
       longDateFormat = pMoment()._lang._longDateFormat;
 
       if (!picker.format) {
-        if (picker.isInput) picker.format = picker.element.data('format');
-        else picker.format = picker.element.find('input').data('format');
+        if (picker.isInput) {
+          picker.format = picker.element.data('format');
+        } else {
+          picker.format = picker.element.find('input').data('format');
+        }
         if (!picker.format) {
           picker.format = (picker.options.pickDate ? longDateFormat.L : '');
-          if (picker.options.pickDate && picker.options.pickTime) picker.format += ' ';
+          if (picker.options.pickDate && picker.options.pickTime) {
+            picker.format += ' ';
+          }
           picker.format += (picker.options.pickTime ? longDateFormat.LT : '');
         }
       }
 
       picker.use24hours = picker.format.toLowerCase().indexOf("a") < 1;
-
-      if (picker.component) icon = picker.component.find('span');
+      if (picker.component) {
+        icon = picker.component.find('span');
+      }
 
       if (picker.options.pickTime) {
-        if (icon) icon.addClass(picker.options.icons.time);
+        if (icon) {
+          icon.addClass(picker.options.icons.time);
+        }
       }
       if (picker.options.pickDate) {
         if (icon) {
@@ -127,8 +135,10 @@
         }
       }
 
-      picker.widget = $(getTemplate(picker.options.pickDate, picker.options.pickTime, picker.options.collapse)).appendTo('body');
-      picker.minViewMode = picker.options.minViewMode || picker.element.data('date-minviewmode') || 0;
+      picker.widget = $(getTemplate(picker.options.pickDate, 
+          picker.options.pickTime, picker.options.collapse)).appendTo('body');
+      picker.minViewMode = picker.options.minViewMode || 
+          picker.element.data('date-minviewmode') || 0;
       if (typeof picker.minViewMode === 'string') {
         switch (picker.minViewMode) {
           case 'months':
@@ -500,10 +510,11 @@
                   d: day,
                   h: picker.date.hours(),
                   m: picker.date.minutes()
-                }
-                );
+                });
                 picker.viewDate = pMoment({
-                  y: year, M: month, d: Math.min(28, day)
+                  y: year, 
+                  M: month, 
+                  d: Math.min(28, day)
                 });
                 fillDate();
                 set();
@@ -566,9 +577,13 @@
     },
 
     doAction = function (e) {
-      var action = $(e.currentTarget).data('action'), rv = actions[action].apply(picker, arguments), oldDate = picker.date;
+      var action = $(e.currentTarget).data('action');
+      var rv = actions[action].apply(picker, arguments);
+      var oldDate = picker.date;
       stopEvent(e);
-      if (!picker.date) picker.date = pMoment({ y: 1970 });
+      if (!picker.date) {
+        picker.date = pMoment({ y: 1970 });
+      }
       set();
       fillTime();
       notifyChange(oldDate);
@@ -582,14 +597,15 @@
 
     change = function (e) {
       pMoment.lang(picker.options.language);
-      var input = $(e.target), oldDate = picker.date, d = pMoment(input.val(), picker.format, picker.options.useStrict);
+      var input = $(e.target);
+      var oldDate = picker.date;
+      var d = pMoment(input.val(), picker.format, picker.options.useStrict);
       if (d.isValid()) {
         update();
         picker.setValue(d);
         notifyChange(oldDate);
         set();
-      }
-      else {
+      } else {
         picker.viewDate = oldDate;
         //picker.setValue(""); // unset the date when the input is erased
         notifyChange(oldDate);
@@ -604,7 +620,9 @@
         picker.viewMode = Math.max(picker.minViewMode, Math.min(2, picker.viewMode + dir));
       }
 
-      picker.widget.find('.datepicker > div').hide().filter('.datepicker-' + dpGlobal.modes[picker.viewMode].clsName).show();
+      picker.widget.find('.datepicker > div').hide()
+        .filter('.datepicker-' + dpGlobal.modes[picker.viewMode].clsName)
+        .show();
     },
 
     attachDatePickerEvents = function () {
@@ -707,7 +725,9 @@
     set = function () {
       pMoment.lang(picker.options.language);
       var formatted = '', input;
-      if (!picker.unset) formatted = pMoment(picker.date).format(picker.format);
+      if (!picker.unset) {
+        formatted = pMoment(picker.date).format(picker.format);
+      }
       if (!picker.isInput) {
         if (picker.component) {
           input = picker.element.find('input');
@@ -725,21 +745,24 @@
       var newDate;
       if (direction == "add") {
         newDate = pMoment(picker.date);
-        if (newDate.hours() == 23) newDate.add(1, unit);
+        if (newDate.hours() == 23) {
+          newDate.add(1, unit);
+        }
         newDate.add(1, unit);
-      }
-      else {
+      } else {
         newDate = pMoment(picker.date).subtract(1, unit);
       }
-      if (newDate.isAfter(picker.options.endDate) || newDate.subtract(1, unit).isBefore(picker.options.startDate) || isInDisableDates(newDate) || !isInEnableDates(newDate)) {
+      if (newDate.isAfter(picker.options.endDate) || 
+          newDate.subtract(1, unit).isBefore(picker.options.startDate) || 
+          isInDisableDates(newDate) || 
+          !isInEnableDates(newDate)) {
         notifyError(newDate.format(picker.format));
         return;
       }
 
       if (direction == "add") {
         picker.date.add(1, unit);
-      }
-      else {
+      } else {
         picker.date.subtract(1, unit);
       }
     },
@@ -771,8 +794,11 @@
 
     padLeft = function (string) {
       string = string.toString();
-      if (string.length >= 2) return string;
-      else return '0' + string;
+      if (string.length >= 2) {
+        return string;
+      } else {
+        return '0' + string;
+      }
     },
 
     getTemplate = function (pickDate, pickTime, collapse) {
@@ -893,7 +919,9 @@
 
     picker.show = function (e) {
       picker.widget.show();
-      picker.height = picker.component ? picker.component.outerHeight() : picker.element.outerHeight();
+      picker.height = picker.component 
+          ? picker.component.outerHeight() 
+          : picker.element.outerHeight();
       place();
       picker.element.trigger({
         type: 'show.dp',
@@ -940,33 +968,47 @@
       } else {
         picker.unset = false;
       }
-      if (!pMoment.isMoment(newDate)) newDate = pMoment(newDate);
+      if (!pMoment.isMoment(newDate)) {
+        newDate = pMoment(newDate);
+      }
       if (newDate.isValid()) {
         picker.date = newDate;
         set();
-        picker.viewDate = pMoment({ y: picker.date.year(), M: picker.date.month() });
+        picker.viewDate = pMoment({ 
+          y: picker.date.year(), 
+          M: picker.date.month() 
+        });
         fillDate();
         fillTime();
-      }
-      else {
+      } else {
         notifyError(newDate);
       }
     },
 
     picker.getDate = function () {
-      if (picker.unset) return null;
+      if (picker.unset) {
+        return null;
+      }
       return picker.date;
     },
 
     picker.setDate = function (date) {
-      if (!date) picker.setValue(null);
-      else picker.setValue(date);
+      if (!date) {
+        picker.setValue(null);
+      } else {
+        picker.setValue(date);
+      }
     },
 
     picker.setEnabledDates = function (dates) {
-      if (!dates) picker.options.enabledDates = false;
-      else picker.options.enabledDates = dates;
-      if (picker.viewDate) update();
+      if (!dates) {
+        picker.options.enabledDates = false;
+      } else {
+        picker.options.enabledDates = dates;
+      }
+      if (picker.viewDate) {
+        update();
+      }
     },
 
     picker.setEndDate = function (date) {
@@ -974,7 +1016,9 @@
       if (!picker.options.endDate.isValid()) {
         picker.options.endDate = pMoment().add(50, "y");
       }
-      if (picker.viewDate) update();
+      if (picker.viewDate) {
+        update();
+      }
     },
 
     picker.setStartDate = function (date) {
@@ -982,7 +1026,9 @@
       if (!picker.options.startDate.isValid()) {
         picker.options.startDate = pMoment({ y: 1970 });
       }
-      if (picker.viewDate) update();
+      if (picker.viewDate) {
+        update();
+      }
     };
 
     init();
@@ -991,7 +1037,9 @@
   $.fn.datetimepicker = function (options) {
     return this.each(function () {
       var $this = $(this), data = $this.data('DateTimePicker');
-      if (!data) $this.data('DateTimePicker', new DateTimePicker(this, options));
+      if (!data) {
+        $this.data('DateTimePicker', new DateTimePicker(this, options));
+      }
     });
   };
 }));
