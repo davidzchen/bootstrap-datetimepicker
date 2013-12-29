@@ -427,14 +427,21 @@
     },
 
     fillTime = function () {
-      if (!picker.date) return;
+      if (!picker.date) {
+        return;
+      }
       var timeComponents = picker.widget.find('.timepicker span[data-time-component]'),
       hour = picker.date.hours(),
       period = 'AM';
       if (!picker.use24hours) {
-        if (hour >= 12) period = 'PM';
-        if (hour === 0) hour = 12;
-        else if (hour != 12) hour = hour % 12;
+        if (hour >= 12) {
+          period = 'PM';
+        }
+        if (hour === 0) {
+          hour = 12;
+        } else if {
+          (hour != 12) hour = hour % 12;
+        }
         picker.widget.find('.timepicker [data-action=togglePeriod]').text(period);
       }
       timeComponents.filter('[data-time-component=hours]').text(padLeft(hour));
@@ -445,84 +452,92 @@
       e.stopPropagation();
       e.preventDefault();
       picker.unset = false;
-      var target = $(e.target).closest('span, td, th'), month, year, step, day, oldDate = picker.date;
-      if (target.length === 1) {
-        if (!target.is('.disabled')) {
-          switch (target[0].nodeName.toLowerCase()) {
-            case 'th':
-              switch (target[0].className) {
-                case 'switch':
-                  showMode(1);
-                  break;
-                case 'prev':
-                case 'next':
-                  step = dpGlobal.modes[picker.viewMode].navStep;
-                  if (target[0].className === 'prev') step = step * -1;
-                  picker.viewDate.add(step, dpGlobal.modes[picker.viewMode].navFnc);
-                  fillDate();
-                  break;
-              }
+      var target = $(e.target).closest('span, td, th');
+      var month;
+      var year;
+      var step;
+      var day;
+      var oldDate = picker.date;
+      if (target.length !== 1) {
+        return;
+      }
+      if (target.is('.disabled')) {
+        return;
+      }
+      switch (target[0].nodeName.toLowerCase()) {
+        case 'th':
+          switch (target[0].className) {
+            case 'switch':
+              showMode(1);
               break;
-            case 'span':
-              if (target.is('.month')) {
-                month = target.parent().find('span').index(target);
-                picker.viewDate.month(month);
-              } else {
-                year = parseInt(target.text(), 10) || 0;
-                picker.viewDate.year(year);
-              }
-              if (picker.viewMode !== 0) {
-                picker.date = pMoment({
-                  y: picker.viewDate.year(),
-                  M: picker.viewDate.month(),
-                  d: picker.viewDate.date(),
-                  h: picker.date.hours(),
-                  m: picker.date.minutes()
-                });
-                notifyChange(oldDate);
-              }
-              showMode(-1);
+            case 'prev':
+            case 'next':
+              step = dpGlobal.modes[picker.viewMode].navStep;
+              if (target[0].className === 'prev') step = step * -1;
+              picker.viewDate.add(step, dpGlobal.modes[picker.viewMode].navFnc);
               fillDate();
               break;
-            case 'td':
-              if (target.is('.day')) {
-                day = parseInt(target.text(), 10) || 1;
-                month = picker.viewDate.month();
-                year = picker.viewDate.year();
-                if (target.is('.old')) {
-                  if (month === 0) {
-                    month = 11;
-                    year -= 1;
-                  } else {
-                    month -= 1;
-                  }
-                } else if (target.is('.new')) {
-                  if (month == 11) {
-                    month = 0;
-                    year += 1;
-                  } else {
-                    month += 1;
-                  }
-                }
-                picker.date = pMoment({
-                  y: year,
-                  M: month,
-                  d: day,
-                  h: picker.date.hours(),
-                  m: picker.date.minutes()
-                });
-                picker.viewDate = pMoment({
-                  y: year, 
-                  M: month, 
-                  d: Math.min(28, day)
-                });
-                fillDate();
-                set();
-                notifyChange(oldDate);
-              }
-              break;
           }
-        }
+          break;
+        case 'span':
+          if (target.is('.month')) {
+            month = target.parent().find('span').index(target);
+            picker.viewDate.month(month);
+          } else {
+            year = parseInt(target.text(), 10) || 0;
+            picker.viewDate.year(year);
+          }
+          if (picker.viewMode !== 0) {
+            picker.date = pMoment({
+              y: picker.viewDate.year(),
+              M: picker.viewDate.month(),
+              d: picker.viewDate.date(),
+              h: picker.date.hours(),
+              m: picker.date.minutes()
+            });
+            notifyChange(oldDate);
+          }
+          showMode(-1);
+          fillDate();
+          break;
+        case 'td':
+          if (!target.is('.day')) {
+            break;
+          }
+          day = parseInt(target.text(), 10) || 1;
+          month = picker.viewDate.month();
+          year = picker.viewDate.year();
+          if (target.is('.old')) {
+            if (month === 0) {
+              month = 11;
+              year -= 1;
+            } else {
+              month -= 1;
+            }
+          } else if (target.is('.new')) {
+            if (month == 11) {
+              month = 0;
+              year += 1;
+            } else {
+              month += 1;
+            }
+          }
+          picker.date = pMoment({
+            y: year,
+            M: month,
+            d: day,
+            h: picker.date.hours(),
+            m: picker.date.minutes()
+          });
+          picker.viewDate = pMoment({
+            y: year, 
+            M: month, 
+            d: Math.min(28, day)
+          });
+          fillDate();
+          set();
+          notifyChange(oldDate);
+          break;
       }
     },
 
