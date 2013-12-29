@@ -439,8 +439,8 @@
         }
         if (hour === 0) {
           hour = 12;
-        } else if {
-          (hour != 12) hour = hour % 12;
+        } else if (hour != 12) {
+          hour = hour % 12;
         }
         picker.widget.find('.timepicker [data-action=togglePeriod]').text(period);
       }

@@ -1,3 +1,5 @@
+all: deps build
+
 deps:
 	git submodule init
 	git submodule update
@@ -19,4 +21,7 @@ build:
 clean:
 	rm -rf build
 
-.PHONY: deps build clean test
+distclean:
+	rm -rf build node_modules
+
+.PHONY: all deps build clean test
