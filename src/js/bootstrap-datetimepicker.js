@@ -74,33 +74,8 @@
 
     picker = this,
 
-    init = function () {
-
-      var icon = false;
-      picker.options = $.extend({}, defaults, options);
-      picker.options.icons = $.extend({}, icons, picker.options.icons);
-
-      if (!(picker.options.pickTime || picker.options.pickDate))
-        throw new Error('Must choose at least one picker');
-
-      picker.id = dpgId++;
-      pMoment.lang(picker.options.language);
-      picker.date = pMoment();
-      picker.element = $(element);
-      picker.unset = false;
-      picker.isInput = picker.element.is('input');
-      picker.component = false;
-
-      if (picker.element.hasClass('input-group')) {
-        //in case there is more then one 'input-group-addon` #48
-        if (picker.element.find('.datepickerbutton').size() == 0) {
-          picker.component = picker.element.find("[class^='input-group-']");
-        } else {
-          picker.component = picker.element.find('.datepickerbutton');
-        }
-      }
+    initFormat = function() {
       picker.format = picker.options.format;
-
       var longDateFormat = pMoment()._lang._longDateFormat;
 
       if (!picker.format) {
@@ -119,6 +94,20 @@
       }
 
       picker.use24hours = picker.format.toLowerCase().indexOf("a") < 1;
+    },
+
+    // Initialize picker element.
+    initComponent = function() {
+      if (picker.element.hasClass('input-group')) {
+        //in case there is more then one 'input-group-addon` #48
+        if (picker.element.find('.datepickerbutton').size() == 0) {
+          picker.component = picker.element.find("[class^='input-group-']");
+        } else {
+          picker.component = picker.element.find('.datepickerbutton');
+        }
+      }
+
+      var icon = null;
       if (picker.component) {
         icon = picker.component.find('span');
       }
@@ -134,7 +123,9 @@
           icon.addClass(picker.options.icons.date);
         }
       }
+    },
 
+    initViewMode = function() {
       picker.widget = $(getTemplate(picker.options.pickDate, 
           picker.options.pickTime, picker.options.collapse)).appendTo('body');
       picker.minViewMode = picker.options.minViewMode || 
@@ -166,7 +157,10 @@
             break;
         }
       }
+    },
 
+    // Initialize enabled and disabled dates.
+    initDateBounds = function() {
       for (var i = 0; i < picker.options.disabledDates.length; i++) {
         var dDate = picker.options.disabledDates[i];
         dDate = pMoment(dDate);
@@ -186,10 +180,34 @@
         }
         picker.options.enabledDates[i] = dDate.format("L");
       }
+    },
+
+    init = function () {
+      picker.options = $.extend({}, defaults, options);
+      picker.options.icons = $.extend({}, icons, picker.options.icons);
+
+      if (!(picker.options.pickTime || picker.options.pickDate)) {
+        throw new Error('Must choose at least one picker');
+      }
+
+      picker.id = dpgId++;
+      pMoment.lang(picker.options.language);
+      picker.date = pMoment();
+      picker.element = $(element);
+      picker.unset = false;
+      picker.isInput = picker.element.is('input');
+      picker.component = false;
+
+      initFormat();
+      initComponent();
+      initViewMode();
+      initDateBounds();
 
       picker.startViewMode = picker.viewMode;
-      picker.setStartDate(picker.options.startDate || picker.element.data('date-startdate'));
-      picker.setEndDate(picker.options.endDate || picker.element.data('date-enddate'));
+      picker.setStartDate(picker.options.startDate || 
+          picker.element.data('date-startdate'));
+      picker.setEndDate(picker.options.endDate || 
+          picker.element.data('date-enddate'));
       fillDow();
       fillMonths();
       fillHours();
