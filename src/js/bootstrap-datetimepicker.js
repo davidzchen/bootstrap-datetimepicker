@@ -54,6 +54,7 @@
     var defaults = {
       pickDate: true,
       pickTime: true,
+      use24hours: false,
       startDate: new pMoment({ y: 1970 }),
       endDate: new pMoment().add(50, "y"),
       collapse: true,
@@ -91,6 +92,13 @@
           }
           picker.format += (picker.options.pickTime ? longDateFormat.LT : '');
         }
+      }
+
+      var ampmIndex = picker.format.toLowerCase().indexOf("a");
+      if (picker.options.use24hours && ampmIndex >= 1) {
+        picker.format = picker.format.substring(0, ampmIndex) + 
+            picker.format.substring(ampmIndex + 1, picker.format.length);
+        picker.format = picker.format.trim();
       }
 
       picker.use24hours = picker.format.toLowerCase().indexOf("a") < 1;
