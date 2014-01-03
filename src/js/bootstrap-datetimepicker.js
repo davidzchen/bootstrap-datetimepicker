@@ -102,8 +102,6 @@
         picker.format = picker.format.replace('h', 'H');
       }
 
-      console.log(picker.format);
-
       picker.use24hours = picker.format.toLowerCase().indexOf("a") < 1;
     },
 
